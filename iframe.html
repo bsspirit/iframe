@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<h2>子页面</h2>
+		<button onclick="height(1000)">设置子页面高度:1000</button>
+		<button onclick="height(100)">设置子页面高度:100</button>
+		<button onclick="full()">全屏</button>
+		<button onclick="unfull()">取消全屏</button>
+		<script>
+			var domain = "localhost:8000";
+			var handle = null; // 事件句柄
+			function onMessage (event) { //回调事件
+				handle = event;				
+				 if(event.origin.indexOf(domain)>-1){
+					 if(event.data == 'hello'){
+						 console.log("Client connect %s", event.origin);
+						 event.source.postMessage({code:1},'*'); //握手协议
+					 }					  
+			     }
+			}
+			
+			function height(height){ //iframe高度
+				var obj = {code:2,height:height};
+				handle.source.postMessage(obj,'*');
+			}
+			
+			function full(){//iframe全屏
+				var obj = {code:3};
+				handle.source.postMessage(obj,'*');
+			}
+			
+			function unfull(){//iframe取消全屏
+				var obj = {code:4};
+				handle.source.postMessage(obj,'*');
+			}
+			
+			//打开事情监听
+			if (window.addEventListener) {
+				window.addEventListener("message", onMessage, false);
+			} else {
+				window.attachEvent("onmessage", onMessage); //IE
+			}
+		</script>
+	</body>
+
+</html>
